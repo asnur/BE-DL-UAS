@@ -4,6 +4,7 @@ import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import load_img, img_to_array
 from keras.models import load_model
+from keras.applications import inception_v3
 
 # Model path
 model_path = './models/model.h5'
@@ -25,8 +26,9 @@ def predict(file):
   x = load_img(file, target_size=(img_width,img_height))
   x = img_to_array(x)
   x = np.expand_dims(x, axis=0)
+  x = inception_v3.preprocess_input(x)
+
   result = model.predict(x)
-  print(result)
 
   prediction = ''
 
@@ -44,7 +46,10 @@ def predict(file):
     prediction = "Sunrise"
     print("Predicted: Sunrise")
 
-  return prediction
+  accuracy = result[0][answer] * 100
+  print("Accuracy: ", accuracy)
+
+  return prediction, accuracy
 
 #Allow files with extension png, jpg and jpeg
 ALLOWED_EXT = set(['jpg' , 'jpeg' , 'png'])
@@ -64,10 +69,10 @@ def upload():
             filename = file.filename
             file_path = os.path.join('data/uploaded', filename)
             file.save(file_path)
-            result = predict(file_path)
+            result, accuracy = predict(file_path)
             
-            return jsonify({'result': result})
+            return jsonify({'result': result, 'accuracy': accuracy})
     return "Invalid Request"
 
 if __name__ == '__main__':
-    app.run(debug=True,port=6969)
+    app.run(debug=False,port=6969)
