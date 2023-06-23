@@ -75,4 +75,4 @@ def upload():
     return "Invalid Request"
 
 if __name__ == '__main__':
-    app.run(debug=False,port=6969)
+    app.run(debug=False,host="0.0.0.0",port=6969)
