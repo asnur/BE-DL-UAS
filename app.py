@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
@@ -59,6 +60,9 @@ def allowed_file(filename):
 
 #Flask
 app = Flask(__name__)
+
+#CORS
+CORS(app)
 
 #Define route for the API
 @app.route('/predict', methods=['GET','POST'])
